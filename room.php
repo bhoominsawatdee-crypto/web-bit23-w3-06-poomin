@@ -42,7 +42,7 @@
 
         thead{
             background:#3498db;
-            color:white;
+            color:yellow;
         }
 
         thead th{
@@ -98,7 +98,7 @@
         include "action/connect.php";
 
         // ดึงทั้งหมดจากตาราง orders
-        $sql = "SELECT * FROM orders";
+        $sql = "SELECT * FROM rooms";
         $result = mysqli_query($con,$sql);
 
         // ทดสอบ
@@ -108,12 +108,11 @@
     <table border="1">
         <thead>
             <tr>
-                <th>รหัสรายการ</th>
-                <th>ชื่อผู้เข้าพัก</th>
-                <th>ชำระเงิน</th>
-                <th>ประเภท</th>
-                <th>ห้อง</th>
-                <th>ภาพ</th>
+                <th>รหัสห้อง</th>
+                <th>smoke</th>
+                <th>ประเภทอ่าง</th>
+                <th>ราคา</th>
+                
             </tr>
         </thead>
 
@@ -122,14 +121,11 @@
                 foreach($result as $order){
             ?>
             <tr>
-                <td><?=$order["order_id"]?></td>
-                <td><?=$order["name"]?></td>
-                <td><?=$order["payment"]?></td>
-                <td><?=$order["usage_type"]?></td>
                 <td><?=$order["room_id"]?></td>
-                <td>
-                    <img src="<?=$order["image"]?>" style="width:200px">
-                </td>
+                <td><?=$order["smoke"]?></td>
+                <td><?=$order["bathtub"]?></td>
+                <td><?=$order["price"]?></td>
+
             </tr>
             <?php
                 }
