@@ -1,8 +1,6 @@
 <?php
 include "action/connect.php";
-
-// ดึงข้อมูลทั้งหมดจากตาราง rooms
-$sql = "SELECT * FROM rooms";
+$sql = "SELECT * FROM orders";
 $result = mysqli_query($con, $sql);
 ?>
 <!DOCTYPE html>
@@ -10,7 +8,7 @@ $result = mysqli_query($con, $sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายการห้องพัก - MANROOD06</title>
+    <title>จัดการข้อมูลการจอง - MANROOD06</title>
 
     <style>
         * {
@@ -96,7 +94,7 @@ $result = mysqli_query($con, $sql);
 
         .container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: auto;
             background: #ffffff;
             border-radius: 16px;
@@ -123,6 +121,56 @@ $result = mysqli_query($con, $sql);
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        /* Buttons Style */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-add {
+            background-color: #198754;
+            color: #ffffff;
+        }
+
+        .btn-add:hover {
+            background-color: #146c43;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(25, 135, 84, 0.3);
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000000;
+            padding: 6px 12px;
+            font-size: 13px;
+            margin-right: 4px;
+        }
+
+        .btn-edit:hover {
+            background-color: #e0a800;
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: #ffffff;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-delete:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-1px);
         }
 
         /* Table Style */
@@ -173,42 +221,22 @@ $result = mysqli_query($con, $sql);
 
         tbody tr:hover {
             background-color: #eef6ff;
-            transform: scale(1.002);
         }
 
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            text-decoration: none;
+        /* Image Styling */
+        .room-img {
+            width: 140px;
+            height: 90px;
+            object-fit: cover;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-secondary {
-            background-color: #6c757d;
-            color: #ffffff;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
-        }
-
-        /* Badge สำหรับเน้นราคา */
-        .price-text {
-            font-weight: 700;
-            color: #198754;
-            background-color: #e8f5e9;
-            padding: 6px 14px;
-            border-radius: 20px;
-            display: inline-block;
+        .action-btns {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
         }
 
         /* -------------------------------------------
@@ -224,7 +252,7 @@ $result = mysqli_query($con, $sql);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Responsive Layout Support */
+        /* Responsive Design */
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -250,8 +278,8 @@ $result = mysqli_query($con, $sql);
         <a href="index.php" class="brand">🏨 MANROOD06</a>
         <ul>
             <li><a href="index.php">📋 ข้อมูลการเข้าพัก</a></li>
-            <li><a href="room.php" class="active">🏨 ข้อมูลห้องพัก</a></li>
-            <li><a href="manage_order.php">⚙️ จัดการการจอง</a></li>
+            <li><a href="room.php">🏨 ข้อมูลห้องพัก</a></li>
+            <li><a href="manage_order.php" class="active">⚙️ จัดการการจอง</a></li>
         </ul>
     </nav>
 
@@ -260,28 +288,41 @@ $result = mysqli_query($con, $sql);
         <div class="container">
             
             <div class="header-section">
-                <h1>🏨 รายการข้อมูลห้องพัก (Room List)</h1>
-                <a href="index.php" class="btn btn-secondary">← กลับไปหน้า Orders</a>
+                <h1>⚙️ รายการจัดการการจอง (Manage Orders)</h1>
+                <a href="add_order.php" class="btn btn-add">➕ เพิ่มรายการใหม่</a>
             </div>
 
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>รหัสห้อง</th>
-                            <th>การสูบบุหรี่ (Smoke)</th>
-                            <th>ประเภทอ่าง (Bathtub)</th>
-                            <th>ราคา/คืน</th>
+                            <th>รหัสรายการ</th>
+                            <th>ชื่อผู้เข้าพัก</th>
+                            <th>ชำระเงิน</th>
+                            <th>ประเภท</th>
+                            <th>ห้อง</th>
+                            <th>ภาพ</th>
+                            <th>จัดการ</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         <?php foreach($result as $order){ ?>
                         <tr>
-                            <td><strong><?=$order["room_id"]?></strong></td>
-                            <td><?=$order["smoke"]?></td>
-                            <td><?=$order["bathtub"]?></td>
-                            <td><span class="price-text"><?=number_format($order["price"])?> บาท</span></td>
+                            <td><strong><?= $order["order_id"] ?></strong></td>
+                            <td><?= $order["name"] ?></td>
+                            <td><?= $order["payment"] ?></td>
+                            <td><?= $order["usage_type"] ?></td>
+                            <td><?= $order["room_id"] ?></td>
+                            <td>
+                                <img src="<?= $order["image"] ?>" class="room-img" alt="ภาพห้องพัก">
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="edit_order.php?id=<?= $order["order_id"]?>" class="btn btn-edit">แก้ไข</a>
+                                    <a href="action/delete_order.php?id=<?= $order["order_id"]?>" class="btn btn-delete" onclick="return confirm('ยืนยันการลบรายการนี้?');">ลบ</a>
+                                </div>
+                            </td>
                         </tr>
                         <?php } ?>
                     </tbody>
@@ -293,7 +334,7 @@ $result = mysqli_query($con, $sql);
 
     <!-- 3. FOOTER -->
     <footer class="footer">
-        <p>&copy; <?=date('Y')?>poomin sawatdee bit2/3 E-TECH</p>
+        <p>&copy; <?=date('Y')?> poomin sawatdee bit2/3 E-TECH</p>
     </footer>
 
 </body>
