@@ -222,7 +222,7 @@
 
     <!-- 3. FOOTER -->
     <footer class="footer">
-        <p>&copy; <?=date('Y')?> poomin sawatdee bit2/3 E-TECH</p>
+        <p>&copy; <?=date('Y')?> poomin sawatdee 06 bit2/3 E-TECH</p>
     </footer>
 
 </body>
