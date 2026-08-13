@@ -2,11 +2,13 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
+
 $name = $_POST["name"];
 $payment = $_POST["payment"];
 $usage_type = $_POST["usage_type"];
 $image = $_POST["image"];
 $room_id = $_POST["room_id"];
+$order_id = $_POST['order_id'];
 
 include "connect.php";
 
@@ -18,6 +20,8 @@ include "connect.php";
        `room_id`='$room_id',
        `image`='$image'
         WHERE order_id = '$order_id'";
+
+        echo $sql;
 
       $result = mysqli_query($con,$sql);
 
